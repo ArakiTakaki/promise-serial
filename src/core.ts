@@ -16,22 +16,19 @@ interface PromiseSerialResult<T extends readonly unknown[] | []> {
 interface PromiseSerialOptions {
 }
 
-export const promiseSerial = <T extends readonly unknown[] | []>(values: T, {
-}: PromiseSerialOptions = {}): PromiseSerialResult<T> => {
+export const promiseSerial = <T extends Promise<unknown>>(values: (() => T)[], {}: PromiseSerialOptions = {}): PromiseSerialResult<T[]> => {
     let isCancel = false;
 
     const main = async () => {
         const results: any[] = [];
         for (let i = 0; i < values.length; i ++ ) {
-            if (isCancel) throw new CannceledError(results);
-
             try {
-                const result = await values[i];
+                const result = await values[i]();
+                if (isCancel) throw new CannceledError(results);
                 results.push(result);
             } catch (err) {
                 throw err;
             }
-
         }
         return results as any;
     }
