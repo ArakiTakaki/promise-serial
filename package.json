@@ -9,6 +9,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "prerelease": "yarn test",
     "prepare": "yarn build",
     "test": "ts-node __test__/main.ts"
   },
