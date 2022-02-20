@@ -10,22 +10,14 @@ const waitForPromise = async (wait: number, val: string): Promise<string> => {
 
 const main = async () => {
     {
-        const results = promiseSerial([
-            () => waitForPromise(100, 'done 1'),
-            () => waitForPromise(100, 'done 2'),
-            () => waitForPromise(100, 'done 3'),
-            () => waitForPromise(100, 'done 4'),
-        ])
+        const items = ['done 1', 'done 2', 'done 3', 'done 4'];
+        const results = promiseSerial(items.map((val) => () => waitForPromise(100, val)));
         console.log(await results.value)
     }
     {
         try {
-            const results = promiseSerial([
-                () => waitForPromise(100, 'done 1'),
-                () => waitForPromise(100, 'done 2'),
-                () => waitForPromise(100, 'done 3'),
-                () => waitForPromise(100, 'done 4'),
-            ])
+            const items = ['done 1', 'done 2', 'done 3', 'done 4'];
+            const results = promiseSerial(items.map((val) => () => waitForPromise(100, val)));
             console.log(await waitForPromise(110, 'cancel'));
             results.cancel();
             console.log(await results.value)
