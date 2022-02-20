@@ -31,7 +31,7 @@ export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {}: P
             }
         }
         return results;
-    }
+    };
 
     return {
         value: main(),
