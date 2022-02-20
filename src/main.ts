@@ -15,7 +15,7 @@ interface PromiseSerialResult<T extends readonly unknown[] | []> {
 interface PromiseSerialOptions {
 }
 
-const promiseSerial = <T extends readonly unknown[] | []>(values: T, {
+export const promiseSerial = <T extends readonly unknown[] | []>(values: T, {
 }: PromiseSerialOptions = {}): PromiseSerialResult<T> => {
     let isCancel = false;
 
