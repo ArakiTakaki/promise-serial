@@ -17,6 +17,7 @@ test('promise serial test',async () => {
         });
     };
 
+
     const values = ['a', 'b', 'c', 'd', 'e', 'f'];
     const result = await promiseSerial(values.map(waitForTest).map((cb) => call(cb, Math.random() * 200))).value;
     expect(result).toEqual(values);

@@ -13,10 +13,13 @@ interface PromiseSerialResult<T extends readonly unknown[] | []> {
 }
 
 // TODO 随時追加
-interface PromiseSerialOptions {
+interface PromiseSerialOptions<T> {
+    onProgress?: (value: number, result: T) => void
 }
 
-export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {}: PromiseSerialOptions = {}): PromiseSerialResult<T[]> => {
+export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {
+    onProgress
+}: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
     let isCancel = false;
 
     const main = async () => {
@@ -24,6 +27,7 @@ export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {}: P
         for (let i = 0; i < values.length; i ++ ) {
             try {
                 const result = await values[i]();
+                if (onProgress != null) onProgress(i / values.length, result);
                 if (isCancel) throw new CannceledError<T>(results);
                 results.push(result);
             } catch (err) {
