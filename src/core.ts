@@ -25,21 +25,18 @@ export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {
     onProgress,
     timeout = 50000,
 }: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
-    let isComplete = false;
     let isCancel = false;
 
     const results: T[] = [];
+
     const timeoverEvent = debounce(() => {
-        if (isComplete) return;
-        const error = new CannceledError<T>(results);
-        error.message = 'promise is timeout';
-        if (isCancel) throw error;
+        isCancel = true;
     }, timeout);
 
     const main = async () => {
-        timeoverEvent();
-
         for (let i = 0; i < values.length; i ++ ) {
+            timeoverEvent.exec();
+
             try {
                 const result = await values[i]();
                 if (onProgress != null) onProgress((i + 1) / values.length, i, result);
@@ -49,7 +46,8 @@ export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {
                 throw err;
             }
         }
-        isComplete = true;
+
+        timeoverEvent.cancel();
         return results;
     };
 

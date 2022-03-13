@@ -7,15 +7,15 @@ test('util test', async () => {
     expect(result()).toBe(arg);
 });
 
-test('promise serial test',async () => {
-    const waitForTest = (returnValue: string) => async (waitTime: number) => {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve(returnValue);
-            }, waitTime);
-        });
-    };
+const waitForTest = (returnValue: string) => async (waitTime: number) => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(returnValue);
+        }, waitTime);
+    });
+};
 
+test('promise serial test',async () => {
     const values = ['a', 'b', 'c', 'd', 'e', 'f'];
     const result = await promiseSerial(values.map(waitForTest).map((cb) => call(cb, Math.random() * 200)), {
         onProgress: (progress, index) => {
@@ -27,4 +27,12 @@ test('promise serial test',async () => {
         },
     }).value;
     expect(result).toEqual(values);
+});
+
+test('promise serial timeout test', async () => {
+    const values = ['a', 'b', 'c', 'd', 'e', 'f'];
+    const result = promiseSerial(values.map(waitForTest).map((cb) => call(cb, Math.random() * 1000)), {
+        timeout: 100,
+    });
+    await expect(result.value).rejects.toThrowError();
 });

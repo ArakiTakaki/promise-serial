@@ -6,13 +6,21 @@ export const call = <T extends (...args: any[]) => any>(cb: T, ...data: Paramete
  * @param callback
  * @param wait (ms)
  */
-export const debounce = <T extends (...args: any[]) => any>(func: T, wait: number = 500): (...args: Parameters<T>) => void => {
-  let cancelToken: number;
+export const debounce = <T extends (...args: any[]) => any>(func: T, wait: number = 500): {
+  exec: (...args: Parameters<T>) => void,
+  cancel: () => void,
+} => {
+  let cancelToken: NodeJS.Timeout;
   const callback = (...args: Parameters<T>) => {
-    window.clearTimeout(cancelToken);
-    cancelToken = window.setTimeout(() => {
+    clearTimeout(cancelToken);
+    cancelToken = setTimeout(() => {
       func(...args);
     }, wait);
   }
-  return callback;
+  return {
+    exec: callback,
+    cancel: () => {
+      clearTimeout(cancelToken);
+    }
+  };
 };
