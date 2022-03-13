@@ -25,7 +25,7 @@ interface PromiseSerialOptions<T> {
  */
 export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], {
     onProgress,
-    timeout = 50000,
+    timeout = Infinity,
     isNotCancelledThrow = false,
 }: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
     let isCancel = false;
