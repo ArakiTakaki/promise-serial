@@ -1,11 +1,4 @@
-import { promiseSerial, call } from '../src/main';
-
-test('util test', async () => {
-    const arg = 'result'
-    const exampleCallTest = (bar: string) => bar;
-    const result = call(exampleCallTest, arg);
-    expect(result()).toBe(arg);
-});
+import { promiseSerial } from '../src/main';
 
 const waitForTest = (returnValue: string) => async (waitTime: number) => {
     return new Promise(resolve => {

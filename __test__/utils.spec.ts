@@ -1,4 +1,11 @@
-import { debounce, eventPromise } from '../src/utils';
+import { debounce, eventPromise, call } from '../src/utils';
+
+test('call test', async () => {
+    const arg = 'result'
+    const exampleCallTest = (bar: string) => bar;
+    const result = call(exampleCallTest, arg);
+    expect(result()).toBe(arg);
+});
 
 const waitFor = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 test('debounce executed number', async () => {
