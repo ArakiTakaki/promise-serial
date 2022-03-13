@@ -1,3 +1,4 @@
+import { MAX_TIMEOUT_NUMBER } from './constants';
 
 export const call = <T extends (...args: any[]) => any>(cb: T, ...data: Parameters<T>) => (): ReturnType<T> => cb(...data);
 
@@ -8,6 +9,7 @@ interface EventPromiseOption {
 export const eventPromise = <T>({
   timeout = 500000,
 }: EventPromiseOption = {}) => {
+
   const timeoverEvent = debounce((cb: Function) => {
     cb();
   }, timeout);
@@ -16,31 +18,36 @@ export const eventPromise = <T>({
     throw new Error('not defined event');
   };
 
-  let rejectEvent: ((error: Error) => void) = () => {
+  let rejectEvent: ((error?: Error) => void) = () => {
     throw new Error('not defined event');
   };
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<T>((resolve, reject) => {
     let isFinish = false;
 
     timeoverEvent.exec(() => {
       if (isFinish) return;
+      isFinish = true;
+
       const error = new Error('event promise is timeover');
       error.name = 'EventPromiseError';
-      isFinish = true;
       reject(error);
     });
+
     resolveEvent = (value: T) => {
       if (isFinish) return;
-      timeoverEvent.cancel();
-      resolve(value);
       isFinish = true;
+      timeoverEvent.cancel();
+
+      resolve(value);
     };
 
-    rejectEvent = (error: Error) => {
+    rejectEvent = (error?: Error) => {
       if (isFinish) return;
-      reject(error);
       isFinish = true;
+      timeoverEvent.cancel();
+
+      reject(error);
     };
   });
 
@@ -48,6 +55,7 @@ export const eventPromise = <T>({
     promise,
     resolveEvent,
     rejectEvent,
+    cancel: (error: Error = new Error('not thowr')) => rejectEvent(error),
   };
 };
 
@@ -65,7 +73,7 @@ export const debounce = <T extends (...args: any[]) => any>(func: T, wait: numbe
     clearTimeout(cancelToken);
     cancelToken = setTimeout(() => {
       func(...args);
-    }, wait);
+    }, Math.min(wait, MAX_TIMEOUT_NUMBER));
   }
   return {
     exec: callback,
