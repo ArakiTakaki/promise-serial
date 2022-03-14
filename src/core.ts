@@ -86,13 +86,14 @@ interface PromiseSerialOptions<T> {
  * @returns result.progress() 現在の進捗 0-1
  */
 export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], options: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
-    const { isNotCancelledThrow } = options;
-    const cancellable = cancelMiddleware<T>(options.timeout, isNotCancelledThrow);
+    const cancellable = cancelMiddleware<T>(options.timeout, options.isNotCancelledThrow);
     const middlewares = [
         cancellable.middleware,
         options.onProgress != null ? progressMiddleware(options.onProgress) : undefined
     ].filter(notNull)
+
     const process = _promiseSerial<T>(values, middlewares);
+
     return {
         value: process,
         cancel: () => {
