@@ -17,7 +17,7 @@ export interface PromiseSerialOptions<T> {
     middlewares?: PromiseSerialMiddleware<T>[];
 }
 
-export type PromiseSerialHandler<T extends Promise<any>> = (values: PromiseSerialValue<T>, options: PromiseSerialOptions<T>) => PromiseSerialResult<T>;
+export type PromiseSerialHandler<T extends Promise<any>> = (values: PromiseSerialValue<T>, options: PromiseSerialOptions<T>) => PromiseSerialResult<T[]>;
 
 /**
  * Promiseを直列実行させるための関数
