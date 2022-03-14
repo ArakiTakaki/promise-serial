@@ -1,7 +1,13 @@
 
 export { CannceledError } from './errors';
 export { call } from './utils';
-export { promiseSerial } from './promiseSerial';
+export { 
+    promiseSerial,
+    PromiseSerialHandler,
+    PromiseSerialOptions,
+    PromiseSerialResult,
+    PromiseSerialValue,
+} from './promiseSerial';
 export { 
     PromiseSerialMiddleware,
     PromiseSerialMiddlewareHandlers,

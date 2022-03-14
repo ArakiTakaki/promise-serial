@@ -4,17 +4,20 @@ import { cancelMiddleware } from './middlewares/cancel';
 import { ProgressHandler, progressMiddleware } from './middlewares/progress';
 import { notNull } from './utils';
 
-interface PromiseSerialResult<T extends readonly unknown[] | []> {
+export type PromiseSerialValue<T> = (() => T)[];
+export interface PromiseSerialResult<T extends readonly unknown[] | []> {
     value: Promise<T>;
     cancel: () => Promise<T>;
 }
 
-interface PromiseSerialOptions<T> {
+export interface PromiseSerialOptions<T> {
     onProgress?: ProgressHandler<T>,
     timeout?: number;
     isNotCancelledThrow?: boolean;
     middlewares?: PromiseSerialMiddleware<T>[];
 }
+
+export type PromiseSerialHandler<T extends Promise<any>> = (values: PromiseSerialValue<T>, options: PromiseSerialOptions<T>) => PromiseSerialResult<T>;
 
 /**
  * Promiseを直列実行させるための関数
@@ -26,7 +29,7 @@ interface PromiseSerialOptions<T> {
  * @returns result.cancel() 実行時にキャンセル
  * @returns result.progress() 現在の進捗 0-1
  */
-export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], options: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
+export const promiseSerial = <T extends Promise<any>>(values: PromiseSerialValue<T>, options: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
     const cancellable = cancelMiddleware<T>(options.timeout, options.isNotCancelledThrow);
     const middlewares = [
         cancellable.middleware,
