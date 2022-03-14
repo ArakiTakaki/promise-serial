@@ -1,5 +1,5 @@
 import { CannceledError } from '../errors';
-import { Middleware } from "../interfaces/middleware";
+import { PromiseSerialMiddleware } from "../interfaces/middleware";
 import { debounce } from '../utils';
 
 export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCancelledThrow: boolean = false) => {
@@ -23,7 +23,7 @@ export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCancelledTh
         });
     };
 
-    const middleware: Middleware<T> = () => {
+    const middleware: PromiseSerialMiddleware<T> = () => {
         const timeover = debounce((cb: Function) => {
             cb();
         }, timeout);

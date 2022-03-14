@@ -1,8 +1,8 @@
-import { Middleware } from "../interfaces/middleware";
+import { PromiseSerialMiddleware } from "../interfaces/middleware";
 
-export type progressHandler<T> = (value: number, index: number, result: T) => void
-export const progressMiddleware = <T>(onProgress: progressHandler<T>) => {
-    const middleware: Middleware<any> = () => {
+export type ProgressHandler<T> = (value: number, index: number, result: T) => void
+export const progressMiddleware = <T>(onProgress: ProgressHandler<T>) => {
+    const middleware: PromiseSerialMiddleware<any> = () => {
         return {
             beforeUpdate: () => {
             },

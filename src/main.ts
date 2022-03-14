@@ -1,3 +1,8 @@
+
 export { CannceledError } from './errors';
-export { promiseSerial } from './core';
 export { call } from './utils';
+export { promiseSerial } from './promiseSerial';
+export { 
+    PromiseSerialMiddleware,
+    PromiseSerialMiddlewareHandlers,
+} from './interfaces/middleware';

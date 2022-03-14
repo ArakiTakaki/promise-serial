@@ -1,40 +1,45 @@
-type Pocess<T> = Promise<T[]>
-
-export type ErrorHandler<T> = (event: {
+export interface ErrorEvent<T> {
     values: (() => Promise<T>)[];
     results: T[];
     errorObject: Error,
-}) => void;
+}
+export type ErrorHandler<T> = (event: ErrorEvent<T>) => void;
 
-export type BeforeUpdateHandler <T> = (event: {
+export interface BeforeUpdateEvent <T>{
     values: (() => Promise<T>)[];
     results: T[];
     index: number;
     throws: (err: Error) => void;
-}) => void;
+}
+export type BeforeUpdateHandler <T> = (event: BeforeUpdateEvent<T>) => void;
 
-export type UpdateHandler<T> =(event: {
+export interface UpdateEvent<T> {
     values: (() => Promise<T>)[];
     results: T[];
     index: number;
     throws: (err: Error) => void;
-}) => void;
-export type UpdatedHandler <T>= (event: {
+}
+export type UpdateHandler<T> =(event: UpdateEvent<T>) => void;
+
+export interface UpdatedEvent<T>{
     values: (() => Promise<T>)[];
     results: T[];
     index: number;
     throws: (err: Error) => void;
-}) => void;
+}
+export type UpdatedHandler <T>= (event: UpdatedEvent<T>) => void;
 
-export type FinishedHandler<T> = (event: {
+export interface FinishedEvent<T> {
     results: T[];
-}) => void;
+}
+export type FinishedHandler<T> = (event: FinishedEvent<T>) => void;
 
-export type EditResultHandler<T> = (event: {
+export interface EditResultEvent<T> {
     process: Promise<T[]>;
-}) => Promise<T[]>;
+}
+export type EditResultHandler<T> = (event: EditResultEvent<T>) => Promise<T[]>;
 
-export interface Handlers<T> {
+export interface PromiseSerialMiddlewareHandlers<T> {
     error: ErrorHandler<T>;
     beforeUpdate: BeforeUpdateHandler<T>;
     update: UpdateHandler<T>;
@@ -43,4 +48,4 @@ export interface Handlers<T> {
     editResult?: EditResultHandler<T>;
 };
 
-export type Middleware<T> = () => Handlers<T>;
+export type PromiseSerialMiddleware<T> = () => PromiseSerialMiddlewareHandlers<T>;
