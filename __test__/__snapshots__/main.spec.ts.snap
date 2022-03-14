@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`promise serial cancel 1`] = `
+"Canceled the operation of promiseSerial.
+The result in the middle is stored in \\"error.result\\"."
+`;
+
+exports[`promise serial timeout 1`] = `
+"Canceled the operation of promiseSerial.
+The result in the middle is stored in \\"error.result\\"."
+`;

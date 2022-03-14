@@ -24,12 +24,31 @@ describe('promise serial', () => {
         expect(result).toEqual(values);
     });
 
-    it('timeout', async () => {
-        const values = ['a', 'b', 'c', 'd', 'e', 'f'];
-        const result = promiseSerial(values.map(waitForTest).map((cb, index) => call(cb, 100 * index)), {
-            timeout: 100,
-        });
-        expect(result.value).rejects.toThrowError();
+    it('timeout', (done) => {
+        const main = async () => {
+            const values = ['a', 'b', 'c', 'd', 'e', 'f'];
+            const result = promiseSerial(values.map(waitForTest).map((cb, index) => call(cb, 100 * index)), {
+                timeout: 200,
+            });
+            await expect(result.value).rejects.toThrowErrorMatchingSnapshot();
+            done();
+        }
+        main();
+    });
+
+    it('cancel', (done) => {
+        const exec = async () => {
+            const values = ['a', 'b', 'c', 'd', 'e', 'f'];
+            const result = promiseSerial(values.map(waitForTest).map((cb, index) => call(cb, 100 * index)), {
+                timeout: Infinity,
+            });
+            setTimeout(() => {
+                result.cancel();
+            }, 200)
+            await expect(result.value).rejects.toThrowErrorMatchingSnapshot();
+            done();
+        }
+        exec();
     });
 
     it('canncel not throw', async () => {
