@@ -4,23 +4,13 @@ import { cancelMiddleware } from './middlewares/cancel';
 import { progressMiddleware, progressHandler } from './middlewares/progress';
 import { notNull } from './utils';
 
-type PromiseSerialResult2<T extends readonly unknown[] | []> = Promise<T>;
+type Serializable<T extends readonly unknown[] | []> = Promise<T>;
 
-type PromiseSerialResult<T extends readonly unknown[] | []> = {
-    value: Promise<T>;
-    cancel: () => Promise<T>;
-}
+const _promiseSerial = async <T extends Promise<any>>(values: (() => T)[], middlewares: Middleware<T>[] = []): Serializable<T[]> => {
+    const _middleware = middlewares.map(value => value());
 
-// TODO 随時追加
-interface PromiseSerialOptions<T> {
-    onProgress?: progressHandler<T>,
-    timeout?: number;
-    isNotCancelledThrow?: boolean;
-}
-const _promiseSerial = <T extends Promise<any>>(values: (() => T)[], middlewares: Middleware<T>[] = []): PromiseSerialResult2<T[]> => {
     const main = async () => {
         const results: T[] = [];
-        const _middleware = middlewares.map(value => value());
 
         const cancelProcess = (err: Error) => {
             _middleware.forEach((value) => value.error({
@@ -66,9 +56,25 @@ const _promiseSerial = <T extends Promise<any>>(values: (() => T)[], middlewares
         return results;
     };
     const process = main()
-    return process;
+    return await _middleware.reduce((process, { editResult }) => {
+        if (editResult == null) return process;
+        return editResult({
+            process: process,
+        });
+    }, process);
 };
 
+
+type PromiseSerialResult<T extends readonly unknown[] | []> = {
+    value: Promise<T>;
+    cancel: () => Promise<T>;
+}
+
+interface PromiseSerialOptions<T> {
+    onProgress?: progressHandler<T>,
+    timeout?: number;
+    isNotCancelledThrow?: boolean;
+}
 /**
  * Promiseを直列実行させるための関数
  * @param values 同期処理をするPromise群
@@ -81,21 +87,17 @@ const _promiseSerial = <T extends Promise<any>>(values: (() => T)[], middlewares
  */
 export const promiseSerial = <T extends Promise<any>>(values: (() => T)[], options: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
     const { isNotCancelledThrow } = options;
-    const cancellable = cancelMiddleware<T>(options.timeout);
-
+    const cancellable = cancelMiddleware<T>(options.timeout, isNotCancelledThrow);
     const middlewares = [
         cancellable.middleware,
         options.onProgress != null ? progressMiddleware(options.onProgress) : undefined
     ].filter(notNull)
-
     const process = _promiseSerial<T>(values, middlewares);
-    const targetValues = isNotCancelledThrow ? cancellable.cancellableNotThrow(process) : process;
-    
     return {
-        value: targetValues,
+        value: process,
         cancel: () => {
             cancellable.cancel();
-            return targetValues;
+            return process;
         }
     }
 };

@@ -2,11 +2,27 @@ import { CannceledError } from '../errors';
 import { Middleware } from "../interfaces/middleware";
 import { debounce } from '../utils';
 
-export const cancelMiddleware = <T>(timeout: number = Infinity) => {
+export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCancelledThrow: boolean = false) => {
     let isCancel = false;
     const cancel = () => {
         isCancel = true
     };
+
+    const cancellableNotThrow = (target: Promise<T[]>) => {
+        return new Promise<T[]>((resolve, reject) => {
+            target
+                .then(resolve)
+                .catch(err => {
+                    if (err instanceof CannceledError) {
+                        resolve(err.results)
+                        return;
+                    }
+                    reject(err);
+                    return;
+                });
+        });
+    };
+
     const middleware: Middleware<T> = () => {
         const timeover = debounce((cb: Function) => {
             cb();
@@ -31,23 +47,13 @@ export const cancelMiddleware = <T>(timeout: number = Infinity) => {
             finished: () => {
                 timeover.cancel();
             },
+            editResult: (event) => {
+                if (!isNotCancelledThrow) return event.process;
+                return cancellableNotThrow(event.process);
+            }
         }
     };
 
-    const cancellableNotThrow = (target: Promise<T[]>) => {
-        return new Promise<T[]>((resolve, reject) => {
-            target
-                .then(resolve)
-                .catch(err => {
-                    if (err instanceof CannceledError) {
-                        resolve(err.results)
-                        return;
-                    }
-                    reject(err);
-                    return;
-                });
-        });
-    };
 
 
     return {

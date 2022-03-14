@@ -30,12 +30,17 @@ export type FinishedHandler<T> = (event: {
     results: T[];
 }) => void;
 
-export type Handlers<T> = {
-    error: ErrorHandler<T>,
-    beforeUpdate: BeforeUpdateHandler<T>,
-    update: UpdateHandler<T>,
-    updated: UpdatedHandler<T>,
-    finished: FinishedHandler<T>,
+export type EditResultHandler<T> = (event: {
+    process: Promise<T[]>;
+}) => Promise<T[]>;
+
+export interface Handlers<T> {
+    error: ErrorHandler<T>;
+    beforeUpdate: BeforeUpdateHandler<T>;
+    update: UpdateHandler<T>;
+    updated: UpdatedHandler<T>;
+    finished: FinishedHandler<T>;
+    editResult?: EditResultHandler<T>;
 };
 
 export type Middleware<T> = () => Handlers<T>;
