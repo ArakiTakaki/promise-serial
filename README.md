@@ -50,7 +50,7 @@ Throwされたタイミングに実施
 
 PromiseSerialの結果が搬入される。
 
-## gentting satrted
+## getting started
 
 - `npm install @araki-packages/promise-serial`
 - `yarn add @araki-packages/promise-serial`
