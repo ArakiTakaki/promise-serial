@@ -56,7 +56,7 @@ describe('promise serial', () => {
         const answer = ['a'];
         const result = promiseSerial(values.map(waitForTest).map((cb) => call(cb, 100)), {
             timeout: Infinity,
-            isNotCancelledThrow: true,
+            isNotCanceledThrow: true,
         });
 
         setTimeout(() => {
