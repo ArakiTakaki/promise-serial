@@ -4,7 +4,6 @@ import { debounce } from '../utils';
 
 export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCancelledThrow: boolean = false) => {
     let isCancel = false;
-
     let process: Promise<T[]> | null = null;
 
     const cancellableNotThrow = (target: Promise<T[]>) => {
@@ -53,9 +52,10 @@ export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCancelledTh
                 timeover.cancel();
             },
             editResult: (event) => {
+                process = event.process;
                 if (!isNotCancelledThrow) return event.process;
                 return cancellableNotThrow(event.process);
-            }
+            },
         }
     };
 

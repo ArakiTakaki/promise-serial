@@ -54,10 +54,11 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
         return results;
     };
     const process = main()
-    return await _middleware.reduce((process, { editResult }) => {
+    const result = _middleware.reduce((process, { editResult }) => {
         if (editResult == null) return process;
         return editResult({
             process: process,
         });
     }, process);
+    return result;
 };
