@@ -1,6 +1,6 @@
 {
   "name": "@araki-packages/promise-serial",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "repository": "git@github.com:ArakiTakaki/promise-serial.git",
