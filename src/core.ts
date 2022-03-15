@@ -47,6 +47,7 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
                 throws: cancelProcess,
             }));
         }
+
         _middleware.forEach(value => value.finished({
             results: results,
         }));

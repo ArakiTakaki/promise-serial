@@ -41,9 +41,6 @@ export const promiseSerial = <T extends Promise<any>>(values: PromiseSerialValue
 
     return {
         value: process,
-        cancel: () => {
-            cancellable.cancel();
-            return process;
-        }
+        cancel: cancellable.cancel,
     }
 };
