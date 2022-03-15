@@ -30,9 +30,9 @@ export type PromiseSerialHandler<T extends Promise<any>> = (values: PromiseSeria
  * @returns result.progress() 現在の進捗 0-1
  */
 export const promiseSerial = <T extends Promise<any>>(values: PromiseSerialValue<T>, options: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
-    const Cancelable = cancelMiddleware<T>(options.timeout, options.isNotCanceledThrow);
+    const cancelable = cancelMiddleware<T>(options.timeout, options.isNotCanceledThrow);
     const middlewares = [
-        Cancelable.middleware,
+        cancelable.middleware,
         options.onProgress != null ? progressMiddleware(options.onProgress) : undefined,
         ...(options.middlewares || []),
     ].filter(notNull)
@@ -41,9 +41,6 @@ export const promiseSerial = <T extends Promise<any>>(values: PromiseSerialValue
 
     return {
         value: process,
-        cancel: () => {
-            Cancelable.cancel();
-            return process;
-        }
+        cancel: cancelable.cancel
     }
 };

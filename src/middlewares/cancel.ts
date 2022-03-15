@@ -4,11 +4,9 @@ import { debounce } from '../utils';
 
 export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCanceledThrow: boolean = false) => {
     let isCancel = false;
-    const cancel = () => {
-        isCancel = true
-    };
+    let process: Promise<T[]> | null = null;
 
-    const CancelableNotThrow = (target: Promise<T[]>) => {
+    const cancelableNotThrow = (target: Promise<T[]>) => {
         return new Promise<T[]>((resolve, reject) => {
             target
                 .then(resolve)
@@ -21,6 +19,12 @@ export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCanceledThr
                     return;
                 });
         });
+    };
+
+    const cancel = () => {
+        isCancel = true
+        if (process == null) throw new Error('not found process');
+        return cancelableNotThrow(process);
     };
 
     const middleware: PromiseSerialMiddleware<T> = () => {
@@ -48,17 +52,15 @@ export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCanceledThr
                 timeover.cancel();
             },
             editResult: (event) => {
+                process = event.process;
                 if (!isNotCanceledThrow) return event.process;
-                return CancelableNotThrow(event.process);
-            }
+                return cancelableNotThrow(event.process);
+            },
         }
     };
-
-
 
     return {
         middleware,
         cancel,
-        CancelableNotThrow,
     }
 };
