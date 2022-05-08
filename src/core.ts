@@ -1,9 +1,7 @@
 import { CannceledError } from './errors';
 import { PromiseSerialMiddleware } from './interfaces/middleware';
 
-type Serializable<T extends readonly unknown[] | []> = Promise<T>;
-
-export const serializer = async <T extends Promise<any>>(values: (() => T)[], middlewares: PromiseSerialMiddleware<T>[] = []): Serializable<T[]> => {
+export const serializer = async <T extends Promise<any>>(values: (() => T)[], middlewares: PromiseSerialMiddleware<T>[] = []) => {
     const _middleware = middlewares.map(value => value());
 
     const main = async () => {
@@ -54,11 +52,13 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
         return results;
     };
     const process = main()
+
     const result = _middleware.reduce((process, { editResult }) => {
         if (editResult == null) return process;
         return editResult({
             process: process,
         });
     }, process);
-    return result;
+
+    return await result;
 };
