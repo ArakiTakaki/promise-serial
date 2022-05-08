@@ -1,7 +1,7 @@
 import { promiseSerial } from '../src/main';
 import { call } from '../src/utils';
 
-const waitForTest = (returnValue: string) => async (waitTime: number) => {
+const waitForTest = (returnValue: string) => async (waitTime: number): Promise<string> => {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(returnValue);
@@ -64,5 +64,13 @@ describe('promise serial', () => {
         }, 120);
 
         await expect(result.value).resolves.toEqual(answer);
+    });
+});
+
+describe('issue', () => {
+    it('#17', async () => {
+        const values = ['a', 'b', 'c', 'd', 'e', 'f'];
+        const result = await promiseSerial(values.map(waitForTest).map((cb, index) => call(cb, 100 * index))).value;
+        expect(typeof result[0]).toEqual('string');
     });
 });
