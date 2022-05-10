@@ -29,7 +29,7 @@ export type PromiseSerialHandler<T extends Promise<any>> = (values: PromiseSeria
  * @returns result.cancel() 実行時にキャンセル
  * @returns result.progress() 現在の進捗 0-1
  */
-export const promiseSerial = <T extends Promise<any>>(values: PromiseSerialValue<T>, options: PromiseSerialOptions<T> = {}): PromiseSerialResult<T[]> => {
+export const promiseSerial = <T extends Promise<any>>(values: PromiseSerialValue<T>, options: PromiseSerialOptions<T> = {}) => {
     const cancelable = cancelMiddleware<T>(options.timeout, options.isNotCanceledThrow);
     const middlewares = [
         cancelable.middleware,

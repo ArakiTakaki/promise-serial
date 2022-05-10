@@ -5,7 +5,7 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
     const _middleware = middlewares.map(value => value());
 
     const main = async () => {
-        const results: T[] = [];
+        const results: Awaited<T>[] = [];
 
         const cancelProcess = (err: Error) => {
             _middleware.forEach((value) => value.error({
@@ -52,6 +52,9 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
         return results;
     };
     const process = main()
+    _middleware.map(val => {
+        return val;
+    });
 
     const result = _middleware.reduce((process, { editResult }) => {
         if (editResult == null) return process;
@@ -60,5 +63,6 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
         });
     }, process);
 
-    return await result;
+    const value = await result;
+    return value;
 };
