@@ -1,4 +1,4 @@
-import { CannceledError } from '../errors';
+import { CanceledError } from '../errors';
 import { PromiseSerialMiddleware } from "../interfaces/middleware";
 import { debounce } from '../utils';
 
@@ -11,7 +11,7 @@ export const cancelMiddleware = <T extends Promise<any[]>>(timeout: number = Inf
             target
                 .then(resolve)
                 .catch(err => {
-                    if (err instanceof CannceledError) {
+                    if (err instanceof CanceledError) {
                         resolve(err.results)
                         return;
                     }
@@ -43,7 +43,7 @@ export const cancelMiddleware = <T extends Promise<any[]>>(timeout: number = Inf
             },
             update: (event) => {
                 if (isCancel) {
-                    event.throws(new CannceledError<T>(event.results));
+                    event.throws(new CanceledError<T>(event.results));
                 }
             },
             updated: () => {

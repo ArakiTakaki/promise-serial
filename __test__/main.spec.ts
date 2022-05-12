@@ -51,7 +51,7 @@ describe('promise serial', () => {
         exec();
     });
 
-    it('canncel not throw', async () => {
+    it('Cancel not throw', async () => {
         const values = ['a', 'b', 'c', 'd', 'e', 'f'];
         const answer = ['a'];
         const result = promiseSerial(values.map(waitForTest).map((cb) => call(cb, 100)), {

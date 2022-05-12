@@ -24,7 +24,7 @@ export type PromiseSerialHandler<T extends Promise<any>> = (values: PromiseSeria
  * @param values 同期処理をするPromise群
  * @param options.onProgress 進行状況を返却するコールバックの定義
  * @param options.timeout 各イベントのタイムアウト期間 (初期値：無限)
- * @param options.isNotCanceledThrow canncel時にthrowするかどうか
+ * @param options.isNotCanceledThrow Cancel時にthrowするかどうか
  * @returns result.value Promiseを返却
  * @returns result.cancel() 実行時にキャンセル
  * @returns result.progress() 現在の進捗 0-1

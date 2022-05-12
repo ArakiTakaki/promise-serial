@@ -1,5 +1,5 @@
 
-export { CannceledError } from './errors';
+export { CanceledError } from './errors';
 export { call } from './utils';
 export { 
     promiseSerial,

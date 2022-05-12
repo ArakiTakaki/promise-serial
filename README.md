@@ -58,7 +58,7 @@ PromiseSerialの結果が搬入される。
 ## usage
 
 ```ts
-import { promiseSerial, CannceledError } from '@araki-packages/promise-serial';
+import { promiseSerial, CanceledError } from '@araki-packages/promise-serial';
 
 const waitForPromise = async (wait: number, val: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -83,7 +83,7 @@ const main = async () => {
         results.cancel();
         console.log(await results.value)
     } catch (err) {
-        if (err instanceof CannceledError) {
+        if (err instanceof CanceledError) {
             console.error(err.results);
             // ['done1']
         }

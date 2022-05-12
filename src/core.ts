@@ -1,4 +1,4 @@
-import { CannceledError } from './errors';
+import { CanceledError } from './errors';
 import { PromiseSerialMiddleware } from './interfaces/middleware';
 
 export const serializer = async <T extends Promise<any>>(values: (() => T)[], middlewares: PromiseSerialMiddleware<T>[] = []) => {
@@ -17,7 +17,7 @@ export const serializer = async <T extends Promise<any>>(values: (() => T)[], mi
                 results,
             }));
             
-            if (err != null) throw new CannceledError<T>(results);
+            if (err != null) throw new CanceledError<T>(results);
         }
 
         for (let i = 0; i < values.length; i ++ ) {
