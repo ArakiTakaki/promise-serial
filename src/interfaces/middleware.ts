@@ -37,7 +37,7 @@ export type FinishedHandler<T> = (event: FinishedEvent<T>) => void;
 export interface EditResultEvent<T> {
     process: Promise<Awaited<T[]>>;
 }
-export type EditResultHandler<T> = (event: EditResultEvent<T>) => Promise<T[]>;
+export type EditResultHandler = (event: EditResultEvent<any>) => Promise<any[]>;
 
 export interface PromiseSerialMiddlewareHandlers<T> {
     error: ErrorHandler<T>;
@@ -45,7 +45,7 @@ export interface PromiseSerialMiddlewareHandlers<T> {
     update: UpdateHandler<T>;
     updated: UpdatedHandler<T>;
     finished: FinishedHandler<T>;
-    editResult?: EditResultHandler<any>;
+    editResult?: EditResultHandler;
 };
 
 export type PromiseSerialMiddleware<T> = () => PromiseSerialMiddlewareHandlers<T>;

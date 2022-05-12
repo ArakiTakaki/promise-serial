@@ -2,12 +2,12 @@ import { CannceledError } from '../errors';
 import { PromiseSerialMiddleware } from "../interfaces/middleware";
 import { debounce } from '../utils';
 
-export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCanceledThrow: boolean = false) => {
+export const cancelMiddleware = <T extends Promise<any[]>>(timeout: number = Infinity, isNotCanceledThrow: boolean = false) => {
     let isCancel = false;
-    let process: Promise<T[]> | null = null;
+    let process: T | null = null;
 
-    const cancelableNotThrow = (target: Promise<T[]>) => {
-        return new Promise<T[]>((resolve, reject) => {
+    const cancelableNotThrow = (target: T) => {
+        return new Promise<Awaited<T>[]>((resolve, reject) => {
             target
                 .then(resolve)
                 .catch(err => {
@@ -52,9 +52,9 @@ export const cancelMiddleware = <T>(timeout: number = Infinity, isNotCanceledThr
                 timeover.cancel();
             },
             editResult: (event) => {
-                process = event.process;
+                process = event.process as any;
                 if (!isNotCanceledThrow) return event.process;
-                return cancelableNotThrow(event.process);
+                return cancelableNotThrow(event.process as any);
             },
         }
     };
